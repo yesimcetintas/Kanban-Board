@@ -1,0 +1,16 @@
+.boardList{
+    display: flex;
+    align-self: center;
+
+}
+
+.board-btn{
+    margin-right: 20px;
+    width: 150px;
+    height: 60px;
+    border: none;
+   }
+.title {
+display: flow-root;
+} 
+

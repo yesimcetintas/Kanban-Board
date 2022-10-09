@@ -1,0 +1,34 @@
+body{
+  /* background-size: 60%; */
+  background-image: url("./asserts/images/background.jpg"); 
+  background-size: cover;
+  
+}
+
+
+/*
+ * scroll bar styling
+ */
+ *::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+*::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+*::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+}
+
+/* Handle on hover */
+*::-webkit-scrollbar-thumb:hover {
+  background: rgb(217 215 215);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(179, 174, 174, 0.5);
+}
