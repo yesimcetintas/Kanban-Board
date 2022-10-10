@@ -1,4 +1,4 @@
-import { label } from "../Card/CardInfo/CardInfo.types"
+import { checklist, label } from "../Card/CardInfo/CardInfo.types"
 
 export type ListProps= {
 }
@@ -15,4 +15,5 @@ export type card={
     duedate: string | null | undefined
     order: number | undefined
     labels: label[]
+    checklists: checklist[]
 }

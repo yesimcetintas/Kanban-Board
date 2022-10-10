@@ -10,7 +10,7 @@ import {
 import  { list } from '../../pages/Board/Board.types'
 import { card } from '../../components/List/List.types'
 import { StateType, ContextType } from './types'
-import { label } from '../../components/Card/CardInfo/CardInfo.types'
+import { checklist, checklistItem, label } from '../../components/Card/CardInfo/CardInfo.types'
 
 export const initialState: StateType = {
   lists: []
@@ -45,6 +45,7 @@ export const ListContext = createContext<ContextType>({
 
         const tempList = [...state.lists];
         card.labels=[]
+        card.checklists=[]
         tempList[listIndex].cards?.push(card)
         setState((prev) => ({
             ...prev,
@@ -52,6 +53,7 @@ export const ListContext = createContext<ContextType>({
             }))
     }
 
+    
     dispatches.updateCard = (card: card) => {
       const listIndex = state.lists.findIndex((item: list) => item.id === card?.listId);
       if (listIndex < 0) return;
@@ -84,6 +86,57 @@ export const ListContext = createContext<ContextType>({
        
       }
 
+      dispatches.addChecklist = (checklist: checklist, listId: number) => {
+        const listIndex = state.lists.findIndex((item: list) => item.id === listId);
+        if (listIndex < 0) return;
+        const tempList = [...state.lists];
+        const cardIndex = tempList[listIndex].cards?.findIndex(c=>c.id === checklist.cardId);
+        if(cardIndex! < 0 || cardIndex=== undefined) return;
+        checklist.items = []
+        tempList[listIndex].cards![cardIndex].checklists.push(checklist);
+        setState((prev) => ({
+            ...prev,
+            lists: tempList,
+        }))
+      }
+
+      dispatches.addChecklistItem = (checklistItem: checklistItem , listId: number, cardId: number) => {
+  
+        const listIndex = state.lists.findIndex((item: list) => item.id === listId);
+        if (listIndex < 0) return;
+        const tempList = [...state.lists];
+        const cardIndex = tempList[listIndex].cards?.findIndex(c=>c.id === cardId);
+        if(cardIndex! < 0 || cardIndex=== undefined) return;
+        const checklistIndex = tempList[listIndex].cards![cardIndex].checklists.findIndex(elm=>elm.id === checklistItem.checklistId)
+
+        tempList[listIndex].cards![cardIndex].checklists[checklistIndex].items.push(checklistItem)
+        setState((prev) => ({
+          ...prev,
+          lists: tempList,
+        }))
+   
+      }
+
+      dispatches.updateTask = (checklistItem: checklistItem , listId: number, cardId: number) => {
+        const listIndex = state.lists.findIndex((item: list) => item.id === listId);
+        if (listIndex < 0) return;
+
+        const tempList = [...state.lists];
+
+        const cardIndex = tempList[listIndex].cards?.findIndex(c=>c.id === cardId);
+        if(cardIndex! < 0 || cardIndex=== undefined) return;
+
+        const checklistIndex = tempList[listIndex].cards![cardIndex].checklists.findIndex(elm=>elm.id === checklistItem.checklistId)
+
+        const checklistItemIndex = tempList[listIndex].cards![cardIndex].checklists[checklistIndex].items.findIndex(elm=>elm.id === checklistItem.id)
+
+        tempList[listIndex].cards![cardIndex].checklists[checklistIndex].items[checklistItemIndex] = checklistItem
+        setState((prev) => ({
+          ...prev,
+          lists: tempList,
+        }))
+      }
+
       dispatches.deleteLabel = (labelId: number, cardId: number, listId: number) => {
         const listIndex = state.lists.findIndex((item: list) => item.id === listId);
         if (listIndex < 0) return;
@@ -101,6 +154,8 @@ export const ListContext = createContext<ContextType>({
         }))
       
       }
+
+
    
   
     return (

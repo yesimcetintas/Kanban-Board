@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import AddList from '../../components/AddList'
 import { AddListProps } from '../../components/AddList/AddList.types'
 import List from '../../components/List'
 import { listService } from '../../services/http/endpoints/list'
 import { ListRequestPayload } from '../../services/http/endpoints/list/types'
-import { list } from './Board.types'
 
 import "./Board.css"
 import { useListContext } from '../../contexts/ListContext/ListContext'

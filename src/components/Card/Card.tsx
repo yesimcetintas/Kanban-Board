@@ -53,7 +53,7 @@ const Card: FC<CardProps> = (props) => {
                 ))}
             </div>
             <div className='card-top-more'>
-
+            <MoreHorizontal />
             </div>
         </div>
         <div className='card-title'>{props.card?.title}</div>
@@ -68,6 +68,7 @@ const Card: FC<CardProps> = (props) => {
               <Clock className="card-footer-icon" />
               {formatDate(props.card?.duedate)}
             </p>
+          
           )}
             
         </div>

@@ -1,27 +1,31 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
-import { Select, Tag } from 'antd';
 import { Calendar, CheckSquare, List, Tag as TagIcon, Trash, Type } from "react-feather";
-import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import CustomInput from '../../CustomInput'
 import Modal from '../../Modal'
-import { CardInfoProps, label } from './CardInfo.types'
+import { CardInfoProps, checklist, checklistItem, label } from './CardInfo.types'
 
 import "./CardInfo.css"
 import { DatePicker, DatePickerProps } from 'antd'
 import { card } from '../../List/List.types'
 import moment from 'moment';
 import { labelService } from '../../../services/http/endpoints/label'
-import { cardService } from '../../../services/http/endpoints/card';
 import { cardLabelService } from '../../../services/http/endpoints/cardLabel';
 import { CardLabelRequestPayload } from '../../../services/http/endpoints/cardLabel/types';
 import { useListContext } from '../../../contexts/ListContext/ListContext';
+import { CardChecklistRequestPayload } from '../../../services/http/endpoints/checklist/types';
+import { cardChecklistService } from '../../../services/http/endpoints/checklist';
+import { CardChecklistItemRequestPayload, updateIsCheckedChecklistItemRequestPayload } from '../../../services/http/endpoints/checklistItem/types';
+import { cardChecklistItemService } from '../../../services/http/endpoints/checklistItem';
+import { CustomInputProps } from '../../CustomInput/CustomInput.types';
+import Checklist from './Checklist';
+import Label from './Label';
 
 const CardInfo: FC<CardInfoProps> = (props) => {
   const [cardValues, setCardValues] = useState<card>(
     props.card
   )
   const listCtx = useListContext()
-
+    
   interface ItemProps {
     label: string;
     value: string;
@@ -29,6 +33,7 @@ const CardInfo: FC<CardInfoProps> = (props) => {
   }
   
   const [options, setOptions] = useState<ItemProps[]>()
+  const [checkListItemTitle, setCheckListItemTitle] = useState<string>()
 
   const { updateCard } = props
   const dateValue = props.card?.duedate !== null ? moment(props.card?.duedate) : undefined
@@ -96,8 +101,6 @@ const CardInfo: FC<CardInfoProps> = (props) => {
     
   };
 
-  const selectedLabelIds = cardValues.labels.map((elm)=>elm.id.toString())
-
   const handleDeselect = (value: string) => {
    const cardLabelId = cardValues.labels.find(p=>p.id === Number(value))?.CardLabel.id
     cardLabelService.deleteCardLabel(cardLabelId!).then(()=>{
@@ -105,32 +108,54 @@ const CardInfo: FC<CardInfoProps> = (props) => {
     })
   };
 
-  const tagRender = (props: CustomTagProps) => {
-    const { label, value, closable, onClose } = props;
-    const color = cardValues.labels.find((elm)=>elm.id == Number(value))?.color
-    const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
-      event.preventDefault();
-      event.stopPropagation();
-    };
-   
-    return (
-      <Tag
-        color={color}
-        onMouseDown={onPreventMouseDown}
-        closable={closable}
-        onClose={onClose}
-        style={{ marginRight: 3 }}
-      >
-        {label}
-      </Tag>
-    );
+  const addChecklist = (value: string) => {
+    const cardChecklistRequest: CardChecklistRequestPayload = {
+      cardId: cardValues.id!,
+      title: value
+    }
+    
+    cardChecklistService.createCardChecklist(cardChecklistRequest).then(({ data }) => {
+      listCtx.dispatches.addChecklist(data, cardValues.listId)
+    })
+  }
+
+  const addChecklistItem = (checkListId: number) => {
+    const cardChecklistItemRequest: CardChecklistItemRequestPayload = {
+      checklistId: checkListId,
+      title: checkListItemTitle!,
+      isChecked: false
+    }
+    
+    cardChecklistItemService.createCardChecklistItem(cardChecklistItemRequest).then(({ data }) => {
+      listCtx.dispatches.addChecklistItem(data, cardValues.listId, cardValues.id)
+    })
+  }
+
+  const handleCheckListItemTitleChange: CustomInputProps['onChange'] = (e, v) => {
+    setCheckListItemTitle(v)
+  }
+
+  const updateTask = (id: number, value: boolean, checklistId: number) => {
+    const itemArr = cardValues.checklists.find((elm: checklist)=> elm.id === checklistId);
+    
+    const itemId= itemArr!.items.find((item: checklistItem) => item.id === id )!.id
+    
+    if (itemId < 0) return;
+
+    const updateIsCheckedChecklistItemRequest: updateIsCheckedChecklistItemRequestPayload = {
+      isChecked: value,
+      id: itemId
+  }
+    cardChecklistItemService.updateIsCheckedChecklistItem(updateIsCheckedChecklistItemRequest).then(({data})=>
+      listCtx.dispatches.updateTask(data, cardValues.listId, cardValues.id)
+    )
+    
   };
 
   return (
     <div>
       <Modal onClose={props.onClose}>
         <div className='cardinfo'>
-
           <div className="cardinfo-box">
             <div className="cardinfo-box-title">
               <Type />
@@ -173,22 +198,35 @@ const CardInfo: FC<CardInfoProps> = (props) => {
           </div>
 
           <div className="cardinfo-box">
-            <div className="cardinfo-box-title">
-              <TagIcon/>
-              <p>Labels</p>
-            </div>
-            <div className="cardinfo-box-labels">
-            <Select
-              mode="multiple"
-              showArrow
-              tagRender={tagRender}
-              style={{ width: '100%' }}
+            <Label
+              labels={cardValues.labels}
               options={options}
-              defaultValue={selectedLabelIds}
               onSelect={handleSelect}
               onDeselect={handleDeselect}
             />
+          </div>
+          <div className="cardinfo-box">
+            <div className="cardinfo-box-task-list">
+              {
+                cardValues.checklists.map((elm:checklist, index)=>
+                  <Checklist
+                    key={index}
+                    checklist={elm}
+                    updateTask = {updateTask}
+                    value={checkListItemTitle}
+                    onChange={handleCheckListItemTitleChange}
+                    onSubmit={() => addChecklistItem(elm.id)}
+                  />
+                )
+              }
             </div>
+            <CustomInput
+              text={"Add a checklist"}
+              name="checklists"
+              placeholder='Enter Checklist Title'
+              displayClass="board-add-card"
+              editClass="board-add-card-edit"
+              onSubmit={addChecklist}/>
           </div>
         </div>
       </Modal>

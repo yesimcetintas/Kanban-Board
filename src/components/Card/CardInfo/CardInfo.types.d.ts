@@ -19,3 +19,17 @@ export type cardLabel = {
     labelId: number
 }
 
+export type checklist = {
+    id: number
+    title: string
+    cardId: number
+    items: checklistItem[]
+}
+
+export type checklistItem = {
+    id: number
+    checklistId: number
+    isChecked: boolean
+    title: string
+}
+
