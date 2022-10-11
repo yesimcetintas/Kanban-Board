@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
-import { Calendar, CheckSquare, List, Tag as TagIcon, Trash, Type } from "react-feather";
+import { Calendar, CheckSquare, List, MessageCircle, Tag as TagIcon, Trash, Type } from "react-feather";
 import CustomInput from '../../CustomInput'
 import Modal from '../../Modal'
 import { CardInfoProps, checklist, checklistItem, label } from './CardInfo.types'
@@ -19,6 +19,7 @@ import { cardChecklistItemService } from '../../../services/http/endpoints/check
 import { CustomInputProps } from '../../CustomInput/CustomInput.types';
 import Checklist from './Checklist';
 import Label from './Label';
+import Comments from "./Comment"
 
 const CardInfo: FC<CardInfoProps> = (props) => {
   const [cardValues, setCardValues] = useState<card>(
@@ -228,6 +229,10 @@ const CardInfo: FC<CardInfoProps> = (props) => {
               editClass="board-add-card-edit"
               onSubmit={addChecklist}/>
           </div>
+          <Comments
+            comments={cardValues.comments}
+            cardId={cardValues.id}
+            listId= {cardValues.listId}/>
         </div>
       </Modal>
       

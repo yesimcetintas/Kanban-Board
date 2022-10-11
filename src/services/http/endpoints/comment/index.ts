@@ -1,0 +1,1 @@
+export * as cardCommentService from './methods'

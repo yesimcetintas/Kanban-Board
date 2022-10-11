@@ -33,3 +33,17 @@ export type checklistItem = {
     title: string
 }
 
+export type comment = {
+    id: number
+    cardId: number
+    message: string
+    authorId: number
+    createdAt: string,
+    author: author
+}
+
+export type author = {
+    id: number,
+    username: string
+}
+

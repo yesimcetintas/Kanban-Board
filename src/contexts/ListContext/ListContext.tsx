@@ -10,7 +10,7 @@ import {
 import  { list } from '../../pages/Board/Board.types'
 import { card } from '../../components/List/List.types'
 import { StateType, ContextType } from './types'
-import { checklist, checklistItem, label } from '../../components/Card/CardInfo/CardInfo.types'
+import { author, checklist, checklistItem, comment, label } from '../../components/Card/CardInfo/CardInfo.types'
 
 export const initialState: StateType = {
   lists: []
@@ -46,6 +46,7 @@ export const ListContext = createContext<ContextType>({
         const tempList = [...state.lists];
         card.labels=[]
         card.checklists=[]
+        card.comments= []
         tempList[listIndex].cards?.push(card)
         setState((prev) => ({
             ...prev,
@@ -100,6 +101,7 @@ export const ListContext = createContext<ContextType>({
         }))
       }
 
+
       dispatches.addChecklistItem = (checklistItem: checklistItem , listId: number, cardId: number) => {
   
         const listIndex = state.lists.findIndex((item: list) => item.id === listId);
@@ -115,6 +117,21 @@ export const ListContext = createContext<ContextType>({
           lists: tempList,
         }))
    
+      }
+
+      dispatches.addComment = (comment: comment , author: author, listId: number, cardId: number) => {
+        const listIndex = state.lists.findIndex((item: list) => item.id === listId);
+        if (listIndex < 0) return;
+        const tempList = [...state.lists];
+        const cardIndex = tempList[listIndex].cards?.findIndex(c=>c.id === cardId);
+        if(cardIndex! < 0 || cardIndex=== undefined) return;
+        
+        comment.author = author
+        tempList[listIndex].cards![cardIndex].comments.push(comment)
+        setState((prev) => ({
+          ...prev,
+          lists: tempList,
+        }))
       }
 
       dispatches.updateTask = (checklistItem: checklistItem , listId: number, cardId: number) => {
@@ -153,6 +170,23 @@ export const ListContext = createContext<ContextType>({
           lists: tempList,
         }))
       
+      }
+
+      dispatches.deleteComment = (id: number, cardId: number, listId: number) => {
+        const listIndex = state.lists.findIndex((item: list) => item.id === listId);
+        if (listIndex < 0) return;
+
+        const tempList = [...state.lists];
+        const cardIndex = tempList[listIndex].cards?.findIndex(c=>c.id === cardId);
+        if(cardIndex! < 0 || cardIndex=== undefined) return;
+
+        const newComments = tempList[listIndex].cards![cardIndex].comments.filter(c=>c.id !== id)
+        tempList[listIndex].cards![cardIndex].comments = newComments
+
+        setState((prev) => ({
+          ...prev,
+          lists: tempList,
+        }))
       }
 
 

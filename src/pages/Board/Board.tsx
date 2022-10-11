@@ -11,7 +11,6 @@ import { useListContext } from '../../contexts/ListContext/ListContext'
 
 
 const Board = () => {
-  // const [lists, setLists] = useState<list[]>([])
   const listCtx = useListContext()
   
   let {id} = useParams()

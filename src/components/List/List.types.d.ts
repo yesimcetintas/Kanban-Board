@@ -16,4 +16,5 @@ export type card={
     order: number | undefined
     labels: label[]
     checklists: checklist[]
+    comments: comments[]
 }

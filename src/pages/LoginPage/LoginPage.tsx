@@ -14,7 +14,7 @@ const LoginPage: FC<LoginPageProps> = (props) => {
 
   const handleLogin: LoginFormProps["onLogin"] = (values) =>{
       auth.login(values).then(({ data }) => {
-        login(data.token, data.username)
+        login(data.token, data.username, data.id)
         navigate('/')
     })
   }
