@@ -1,6 +1,7 @@
 export type ListRequestPayload = {
     title:string,
-    boardId: number
+    boardId: number,
+    order: number
 }
 
 
@@ -8,6 +9,13 @@ export type ListResponseType = {
     data : {
         id : number,
         title: string,
-        boardId: number
+        boardId: number,
+        order: number
     }
+}
+
+export type updateListRequestPayload = {
+    order?: number,
+    listId: number,
+    title?: string
 }

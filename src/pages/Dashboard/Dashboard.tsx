@@ -41,20 +41,23 @@ const Dashboard = () => {
   return (
     <div className='dashboard'>
       <div className="app-nav-dashboard">
-        <h1>Kanban Board</h1>
-      </div>
-      <div>
-        hoşgeldiniz sayın {username}
+          <h1 style={{ color: '#504f4f' }}>Kanban Board</h1>
         <Button className='logout-btn' onClick={handleLogout}>Logout</Button>
       </div>
-      <BoardList
-        boards={boards}
-      />
-      <AddBoard
-        addBoard={addBoardHandler}
-      />
-
-
+      <div>
+       
+      </div>
+      <div className="dashboard-container">
+        <div className="dashboard-inner-container">
+          <BoardList
+            boards={boards}
+          />
+         <div style={{ display: 'flex', width: '200px' }}>
+            <AddBoard
+              addBoard={addBoardHandler} />
+          </div>
+        </div>
+     </div>
     </div>
   )
 }

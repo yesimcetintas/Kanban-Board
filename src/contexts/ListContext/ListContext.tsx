@@ -35,8 +35,28 @@ export const ListContext = createContext<ContextType>({
     dispatches.addList = (list: list) => {
       list.cards = [];
       const tempList = [...state.lists];
+     
       tempList.push(list)
       dispatches.setList(tempList)
+    }
+
+    dispatches.updateList = (title: string, id: number) => {
+      
+      const tempList = [...state.lists];
+      
+      const listIndex = tempList.findIndex((elm)=>elm.id=== id)
+      tempList[listIndex].title = title
+
+      dispatches.setList(tempList)
+    }
+
+    dispatches.removeList = (listId: number) => {
+   
+      const tempList = [...state.lists];
+      const newTemplist = tempList.filter((elm)=>elm.id !== listId)
+      dispatches.setList(newTemplist)
+
+
     }
 
     dispatches.addCard = (card: card) => {
@@ -189,7 +209,23 @@ export const ListContext = createContext<ContextType>({
         }))
       }
 
+      dispatches.updateDragDropList = (sourceIndex: number, destinationIndex: number) => {
 
+        const tempList = [...state.lists];
+        const sourceListOrder= tempList[sourceIndex].order
+
+        const destinationListOrder= tempList[destinationIndex].order
+
+        tempList[sourceIndex].order=destinationListOrder
+        tempList[destinationIndex].order= sourceListOrder
+
+        setState((prev) => ({
+          ...prev,
+          lists: tempList,
+        }))
+
+
+      }
    
   
     return (

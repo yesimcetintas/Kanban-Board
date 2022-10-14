@@ -64,7 +64,7 @@ const CardInfo: FC<CardInfoProps> = (props) => {
   }, [])
 
   const hasBeenInit = () => {
-    return mounted.current >= 2;
+    return mounted.current >= 1;
   }
 
   const setHasBeenInit = () => {
@@ -105,7 +105,7 @@ const CardInfo: FC<CardInfoProps> = (props) => {
   const handleDeselect = (value: string) => {
    const cardLabelId = cardValues.labels.find(p=>p.id === Number(value))?.CardLabel.id
     cardLabelService.deleteCardLabel(cardLabelId!).then(()=>{
-      listCtx.dispatches.deleteLabel()
+      listCtx.dispatches.deleteLabel( Number(value), cardValues.id, cardValues.listId)
     })
   };
 
@@ -163,9 +163,9 @@ const CardInfo: FC<CardInfoProps> = (props) => {
               <p>Title</p>
             </div>
             <CustomInput
-              text={props.card?.title}
+              text={cardValues.title}
               name="title"
-              value={props.card?.title}
+              value={cardValues.title}
               placeholder='Enter Card Title'
               displayClass="board-add-card"
               editClass="board-add-card-edit"
@@ -178,13 +178,13 @@ const CardInfo: FC<CardInfoProps> = (props) => {
               <p>Description</p>
               </div>
               <CustomInput
-              text={props.card?.description === null ? "Add a description" : props.card?.description}
-              name="description"
-              value={props.card?.description}
-              placeholder='Enter Description Title'
-              displayClass="board-add-card"
-              editClass="board-add-card-edit"
-              onSubmit={updateDescription}/>
+                text={cardValues.description === null ? "Add a description" : cardValues.description}
+                name="description"
+                value={cardValues.description}
+                placeholder='Enter Description Title'
+                displayClass="board-add-card"
+                editClass="board-add-card-edit" 
+                onSubmit={updateDescription}/>
           </div>
 
           <div className="cardinfo-box">

@@ -76,3 +76,12 @@
         border-radius: 10px;
         padding: 10px;
     }
+
+    .update-input{
+        margin: 20px;
+        width: 250px;
+    }
+
+    .update-button{
+        margin: 20px;
+    }

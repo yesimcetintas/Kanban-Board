@@ -6,8 +6,8 @@
 
 .board-btn{
     margin-right: 20px;
-    width: 150px;
-    height: 60px;
+    width: 200px !important;
+    height: 100px !important;
     border: none;
    }
 .title {

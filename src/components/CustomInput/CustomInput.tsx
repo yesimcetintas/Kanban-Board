@@ -7,14 +7,15 @@ import "./CustomInput.css"
 
 const CustomInput: FC<CustomInputProps> = (props) => {
 
-  const [isCustomInput, setIsCustomInput] = useState(false);
+  const [isCustomInput, setIsCustomInput] = useState(
+    props.isCustomInput || false
+  );
   const [inputText, setInputText] = useState(
     props.defaultValue || props.value || '');
   
   const submission = (e: any) => {
     e.preventDefault();
     if (inputText && props.onSubmit) {
-      setInputText("");
       props.onSubmit(inputText);
     }
     setIsCustomInput(false);
@@ -42,6 +43,7 @@ const CustomInput: FC<CustomInputProps> = (props) => {
                 />
                 <div className="custom-input-edit-footer">
                     <Button type='primary'  onClick={submission}>{props.buttonText || "Add"}</Button>
+                    
                     <X onClick={()=>setIsCustomInput(false)} className="closeIcon"/>
                 </div>
           </form>

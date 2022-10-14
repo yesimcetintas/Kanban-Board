@@ -23,7 +23,7 @@ const Comment: FC<CommentProps> = (props) => {
   
   const tempComments: CommentItem[] = []
   props.comments.map(item=>{
-    console.log("item", item)
+    
     const comment: CommentItem = {
       id: item.id,
       author: item.author.username,
@@ -39,13 +39,11 @@ const Comment: FC<CommentProps> = (props) => {
   const [value, setValue] = useState<string>('');
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    console.log('target', e.target.value)
+  
     setValue(e.target.value);
   };
 
   const handleSubmit = () => {
-
-    console.log("comment value", value)
     if (!value) return;
 
     const CardCommentRequest: CardCommentRequestPayload = {
@@ -76,7 +74,7 @@ const Comment: FC<CommentProps> = (props) => {
 
   const handleDelete = (id: number) => {
     cardCommentService.deleteComment(id).then(()=>{
-      listCtx.dispatches.deleteComment(id, props.cardId, props.cardId)
+      listCtx.dispatches.deleteComment(id, props.cardId, props.listId)
       const newComment = comments.filter(p=>p.id !== id)
       setComments(newComment)
     })

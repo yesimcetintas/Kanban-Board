@@ -20,7 +20,7 @@ const Card: FC<CardProps> = (props) => {
     card.duedate = card.duedate ?? undefined
     card.order = card.order ?? undefined
 
-    cardService.updateCard(card).then(({data})=>{
+    cardService.updateCard(card).then(()=>{
        listCtx.dispatches.updateCard(card)
     })
   }
@@ -38,11 +38,13 @@ const Card: FC<CardProps> = (props) => {
         updateCard={updateCard}
       />
     )}
-    {/* <div className='card-body'> */}
-      {/* <div>{props.card?.title}</div> */}
       <div 
         className='card'
-        onClick={() => setShowModal(true)}>
+        onClick={() => setShowModal(true)}
+        ref={props.provided.innerRef}
+        {...props.provided.draggableProps}
+        {...props.provided.dragHandleProps}
+        >
         <div className='card-top'>
             <div className='card-top-labels'>
               {

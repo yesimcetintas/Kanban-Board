@@ -6,6 +6,19 @@ import ChecklistItem from '../ChecklistItem'
 import { ChecklistProps } from './Checklist.type'
 
 const Checklist: FC<ChecklistProps> = (props) => {
+
+
+
+  // const calculatedPercent = calculatePercent();
+
+  // const calculatePercent = () => {
+  //   if (!cardValues.tasks?.length) return 0;
+  //   const completed = cardValues.tasks?.filter(
+  //     (item) => item.completed,
+  //   )?.length;
+  //   return (completed / cardValues.tasks?.length) * 100;
+  // };
+  
   return (
     < >
       <div className="cardinfo-box-title">
@@ -13,7 +26,15 @@ const Checklist: FC<ChecklistProps> = (props) => {
         <p>{props.checklist.title}</p>
         </div>
         <div className="cardinfo-box-progress-bar">
-        
+          <div 
+            className="cardinfo-box-progress"
+            // style={{
+            //   width: `${calculatedPercent}%`,
+            //   backgroundColor: calculatedPercent === 100 ? "limegreen" : "",
+            // }}
+            >
+
+          </div>
         </div>
         {
         props.checklist.items.map((item: checklistItem, index: any)=>
