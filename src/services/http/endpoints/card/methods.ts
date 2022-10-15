@@ -8,3 +8,5 @@ export const card = (listId: number) => service.get(`card?listId=${listId}`)
 
 export const updateCard = (payload: CardRequestUpdatePayload) : Promise<CardResponseType> =>
   service.put(`card/${payload.id}`, payload)
+
+export const removeCard = (cardId: number) => service.delete(`card/${cardId}`)

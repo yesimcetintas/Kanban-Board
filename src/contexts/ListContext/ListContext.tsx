@@ -51,13 +51,11 @@ export const ListContext = createContext<ContextType>({
     }
 
     dispatches.removeList = (listId: number) => {
-   
       const tempList = [...state.lists];
       const newTemplist = tempList.filter((elm)=>elm.id !== listId)
       dispatches.setList(newTemplist)
-
-
     }
+
 
     dispatches.addCard = (card: card) => {
         const listIndex = state.lists.findIndex((item: list) => item.id === card?.listId);
@@ -89,6 +87,22 @@ export const ListContext = createContext<ContextType>({
           lists: tempList,
           }))
       }
+
+      dispatches.removeCard = (cardId: number, listId: number) => {
+        const listIndex = state.lists.findIndex((item: list) => item.id === listId);
+        if (listIndex < 0) return;
+  
+        const tempList = [...state.lists];
+        // let cardIndex = tempList[listIndex].cards?.findIndex(c=>c.id === card?.id);
+        // if(cardIndex! < 0 || cardIndex=== undefined) return;
+        const newCardList=tempList[listIndex].cards?.filter((elm)=>elm.id !== cardId)
+  
+        tempList[listIndex].cards = newCardList;
+        setState((prev) => ({
+            ...prev,
+            lists: tempList,
+            }))
+        }
       
       dispatches.insertLabel = (label: label, listId: number) => {
 

@@ -10,3 +10,11 @@ export type list = {
     order: number
   
 }
+
+export type boardMember = {
+    id: number,
+    user: {
+        id: number,
+        username: string
+    }
+}

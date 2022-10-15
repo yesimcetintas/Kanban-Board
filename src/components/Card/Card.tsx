@@ -8,6 +8,7 @@ import "./Card.css"
 import { CardProps } from './Card.types'
 import CardInfo from './CardInfo';
 import { formatDate } from '../../Helper/Util';
+import { Dropdown, Menu, Space } from 'antd';
 
 const Card: FC<CardProps> = (props) => {
   const listCtx = useListContext()
@@ -29,6 +30,34 @@ const Card: FC<CardProps> = (props) => {
     setShowModal(false)
   }
 
+  const removeCard = (id: number) => {
+    cardService.removeCard(id).then(()=>{
+      listCtx.dispatches.removeCard(id, props.card.listId)
+    })
+  }
+
+  const menu = (id: number) => (
+    <Menu
+      items={[
+        {
+          label: <div onClick={() => removeCard(id)}>Remove Card</div>,
+          key: '0',
+        }
+      ]}
+    />
+  );
+
+  const calculateCheckItems = () => {
+    let totalCheckItemsCount = 0
+    let checkedItemsCount = 0
+    props.card.checklists.map(checkList=> {
+      totalCheckItemsCount += checkList.items.length
+      checkedItemsCount += checkList.items.filter(p=>p.isChecked).length
+    })
+    return `${checkedItemsCount}/${totalCheckItemsCount}`
+  }
+
+
   return (
     <>
     {showModal && (
@@ -40,7 +69,7 @@ const Card: FC<CardProps> = (props) => {
     )}
       <div 
         className='card'
-        onClick={() => setShowModal(true)}
+        onClick={() => setShowModal(true) }
         ref={props.provided.innerRef}
         {...props.provided.draggableProps}
         {...props.provided.dragHandleProps}
@@ -54,8 +83,12 @@ const Card: FC<CardProps> = (props) => {
                 </label>
                 ))}
             </div>
-            <div className='card-top-more'>
-            <MoreHorizontal />
+            <div className='card-top-more'  >
+              <Dropdown overlay={() => menu(props.card.id!)} trigger={['hover']}>
+                <Space>
+                  <MoreHorizontal  />
+                </Space>
+              </Dropdown>
             </div>
         </div>
         <div className='card-title'>{props.card?.title}</div>
@@ -70,9 +103,14 @@ const Card: FC<CardProps> = (props) => {
               <Clock className="card-footer-icon" />
               {formatDate(props.card?.duedate)}
             </p>
-          
           )}
-            
+          {props.card.checklists.length >0 && (
+            <p className="card-footer-item">
+              <CheckSquare className='card-footer-icon'/>
+              {calculateCheckItems()}
+            </p>
+          )
+          }
         </div>
       </div>
     {/* </div> */}

@@ -100,7 +100,7 @@ const List: FC<ListProps> =(props) => {
                 <div
                   className="list-header-title-more"
                 >
-                  <Dropdown overlay={() => menu(elm.id!)} trigger={['click']}>
+                  <Dropdown overlay={() => menu(elm.id!)} trigger={['hover']}>
                       <Space>
                         <MoreHorizontal />
                       </Space>
@@ -157,7 +157,6 @@ const List: FC<ListProps> =(props) => {
       {showModal && (
         <Modal 
           onClose={onClose} 
-          // style={{: "red"}}
           >
           <div>
             <Input 

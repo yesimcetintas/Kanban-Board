@@ -58,3 +58,27 @@
   border-radius: 10px;
   padding: 10px;
 }
+
+.add-board-member{
+  float: right;
+  margin-top: -40px;
+  margin-right: 40px;
+  cursor: pointer;
+}
+
+.app-title{
+  margin-top: 10px;
+  color: #504f4f
+}
+
+.add-member-modal-select{
+  width: 400px !important;
+  margin-top: 30px;
+  margin-left: 50px;
+  margin-bottom: 30px;
+}
+
+.add-member-modal-div{
+  width: 500px;
+  height: auto;
+}

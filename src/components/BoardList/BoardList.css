@@ -9,8 +9,32 @@
     width: 200px !important;
     height: 100px !important;
     border: none;
-   }
+}
+
 .title {
-display: flow-root;
+    display: flow-root;
 } 
+.board-top {
+    display: flex;
+    align-items: flex-start;
+}
+.board-header-title-more {
+    cursor: pointer;
+    flex: 1 1;
+    margin-top: -20px;
+}
+
+.board-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.board-top-labels {
+    flex: 3 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 14px;
+    line-height: 21px;
+}
 

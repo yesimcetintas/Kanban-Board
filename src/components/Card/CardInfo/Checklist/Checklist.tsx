@@ -6,18 +6,15 @@ import ChecklistItem from '../ChecklistItem'
 import { ChecklistProps } from './Checklist.type'
 
 const Checklist: FC<ChecklistProps> = (props) => {
-
-
-
-  // const calculatedPercent = calculatePercent();
-
-  // const calculatePercent = () => {
-  //   if (!cardValues.tasks?.length) return 0;
-  //   const completed = cardValues.tasks?.filter(
-  //     (item) => item.completed,
-  //   )?.length;
-  //   return (completed / cardValues.tasks?.length) * 100;
-  // };
+  console.log("checklist", props.checklist)
+  const calculatePercent = () => {
+    if (!props.checklist.items.length) return 0;
+    const completed = props.checklist.items.filter(
+      (item) => item.isChecked,
+    )?.length;
+    return (completed / props.checklist.items.length) * 100;
+  };
+  const calculatedPercent = calculatePercent();
   
   return (
     < >
@@ -28,10 +25,10 @@ const Checklist: FC<ChecklistProps> = (props) => {
         <div className="cardinfo-box-progress-bar">
           <div 
             className="cardinfo-box-progress"
-            // style={{
-            //   width: `${calculatedPercent}%`,
-            //   backgroundColor: calculatedPercent === 100 ? "limegreen" : "",
-            // }}
+            style={{
+              width: `${calculatedPercent}%`,
+              backgroundColor: calculatedPercent === 100 ? "limegreen" : "",
+            }}
             >
 
           </div>

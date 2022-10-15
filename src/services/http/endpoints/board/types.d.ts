@@ -10,3 +10,8 @@ export type BoardResponseType = {
         ownerId: number
     }
 }
+
+export type updateBoardRequestPayload = {
+    boardId: number,
+    title?: string
+}

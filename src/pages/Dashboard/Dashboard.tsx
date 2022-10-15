@@ -38,6 +38,25 @@ const Dashboard = () => {
     logout()
   }
 
+  const handleUpdateTitle = (id: number, title: string) => {
+      boardService.updateBoard({title: title, boardId: id }).then(()=>{
+      const tempBoards = [...boards]
+      const updateBoardIndex=tempBoards.findIndex((elm)=>elm.id === id)
+      tempBoards[updateBoardIndex].title=title
+      setBoards (tempBoards)
+      console.log("board list", boards)
+      })
+  }
+
+  const handleRemoveBoard = (id: number) => {
+    boardService.removeBoard(id).then(()=>{
+      const tempBoards = [... boards]
+      const newBoardList = tempBoards.filter((elm)=>elm.id !== id)
+      setBoards(newBoardList)
+      console.log("boardlist", boards)
+    })
+  }
+
   return (
     <div className='dashboard'>
       <div className="app-nav-dashboard">
@@ -51,6 +70,8 @@ const Dashboard = () => {
         <div className="dashboard-inner-container">
           <BoardList
             boards={boards}
+            onRename={handleUpdateTitle}
+            onRemove={handleRemoveBoard}
           />
          <div style={{ display: 'flex', width: '200px' }}>
             <AddBoard
