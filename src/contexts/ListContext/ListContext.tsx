@@ -65,6 +65,7 @@ export const ListContext = createContext<ContextType>({
         card.labels=[]
         card.checklists=[]
         card.comments= []
+
         tempList[listIndex].cards?.push(card)
         setState((prev) => ({
             ...prev,
@@ -93,8 +94,7 @@ export const ListContext = createContext<ContextType>({
         if (listIndex < 0) return;
   
         const tempList = [...state.lists];
-        // let cardIndex = tempList[listIndex].cards?.findIndex(c=>c.id === card?.id);
-        // if(cardIndex! < 0 || cardIndex=== undefined) return;
+       
         const newCardList=tempList[listIndex].cards?.filter((elm)=>elm.id !== cardId)
   
         tempList[listIndex].cards = newCardList;
@@ -103,6 +103,32 @@ export const ListContext = createContext<ContextType>({
             lists: tempList,
             }))
         }
+
+        dispatches.updateCardOrder = (cardId: number, listId: number, order: number) => {
+          const listIndex = state.lists.findIndex((item: list) => item.id === listId);
+          if (listIndex < 0) return;
+    
+          const tempList = [...state.lists];
+          let cardIndex = tempList[listIndex].cards?.findIndex(c=>c.id === cardId);
+          tempList[listIndex].cards![cardIndex!].order = order
+
+          setState((prev) => ({
+              ...prev,
+              lists: tempList,
+              }))
+          }
+
+        dispatches.setCard = (card: card, destinationIndex: number) => {
+          const listIndex = state.lists.findIndex((item: list) => item.id === card?.listId);
+          if (listIndex < 0) return;
+  
+          const tempList = [...state.lists];
+          tempList[listIndex].cards?.splice(destinationIndex, 0, card)
+          setState((prev) => ({
+              ...prev,
+              lists: tempList,
+              }))
+      }
       
       dispatches.insertLabel = (label: label, listId: number) => {
 
@@ -223,22 +249,17 @@ export const ListContext = createContext<ContextType>({
         }))
       }
 
-      dispatches.updateDragDropList = (sourceIndex: number, destinationIndex: number) => {
+      dispatches.updateDragDropList = (listId: number, newOrder: number) => {
+        const listIndex = state.lists.findIndex((item: list) => item.id === listId);
+        if (listIndex < 0) return;
 
         const tempList = [...state.lists];
-        const sourceListOrder= tempList[sourceIndex].order
-
-        const destinationListOrder= tempList[destinationIndex].order
-
-        tempList[sourceIndex].order=destinationListOrder
-        tempList[destinationIndex].order= sourceListOrder
+        tempList[listIndex].order = newOrder
 
         setState((prev) => ({
           ...prev,
           lists: tempList,
         }))
-
-
       }
    
   

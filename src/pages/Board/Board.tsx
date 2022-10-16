@@ -2,6 +2,7 @@ import  { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import AddList from '../../components/AddList'
 import { AddListProps } from '../../components/AddList/AddList.types'
+import { CardRequestUpdatePayload } from '../../services/http/endpoints/card/types'
 import List from '../../components/List'
 import { listService } from '../../services/http/endpoints/list'
 import { ListRequestPayload, updateListRequestPayload } from '../../services/http/endpoints/list/types'
@@ -17,6 +18,8 @@ import { userListService } from '../../services/http/endpoints/userList'
 import { BoardMemberRequestPayload } from '../../services/http/endpoints/boardMember/types'
 import { boardMemberService } from '../../services/http/endpoints/boardMember'
 import { useLoginContext } from '../../contexts/LoginContext/LoginContext'
+import reorder from '../../Helper/Util'
+import { cardService } from '../../services/http/endpoints/card'
 
 const Board = () => {
 
@@ -46,7 +49,7 @@ const Board = () => {
         
         data = data.filter((p:any)=>p.username !== loginContext.username)
 
-        data.map((item:any)=>{
+        data.forEach((item:any)=>{
           options.push({
             id: item.id,
             value: item.username,
@@ -60,9 +63,8 @@ const Board = () => {
       boardMemberService.list(Number(id)).then(({ data }) => {
         setBoardMembers(data)
       })
-
+ // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
 
     const addListHandler: AddListProps["addList"] = (values) => {
       const maxOrder = listCtx.state.lists.length === 0 ? 0: Math.max.apply(Math, listCtx.state.lists.map(v => v.order));
@@ -91,6 +93,9 @@ const Board = () => {
       }
       const source = result.source;
       const destination = result.destination;
+
+      const sourceDroppableId = source.droppableId.replace('list-', '').replace('card-', '')
+      const destinationDroppableId = destination.droppableId.replace('list-', '').replace('card-', '')
       // did not move anywhere - can bail early
       if (
         source.droppableId === destination.droppableId &&
@@ -101,26 +106,65 @@ const Board = () => {
       // reordering column
       if (result.type === "COLUMN") {
         
-        //TODO: Gelen destion ve source indexlerini değiştir
+        const ordered = reorder(listCtx.state.lists, result.source.index, result.destination.index)
         
-        const updateSourceOrderPayload: updateListRequestPayload = {
-          order: listCtx.state.lists[result.destination.index].order,
-          listId: listCtx.state.lists[result.source.index].id!
-        }
-       
-        const updateDestinationOrderPayload: updateListRequestPayload = {
-          order: listCtx.state.lists[result.source.index].order,
-          listId: listCtx.state.lists[result.destination.index].id!
-        }
+        ordered.forEach((item: any, index)=> {
+          const newOrder = index + 1
 
-        listService.updateList(updateSourceOrderPayload)
-        listService.updateList(updateDestinationOrderPayload)
+          if(newOrder !== item.order) {
+             const updateOrderPayload: updateListRequestPayload = {
+              order: newOrder,
+              listId: item.id
+            }
 
-        listCtx.dispatches.updateDragDropList(result.source.index, result.destination.index )
+            listService.updateList(updateOrderPayload).then(()=> {
+              listCtx.dispatches.updateDragDropList(item.id, newOrder)
+            })
+          }
+        })
         
         return;
       }
+      const current =  listCtx.state.lists.find(p=>p.id === Number(sourceDroppableId!))!.cards
 
+      // moving to same list
+      if (source.droppableId === destination.droppableId) {
+        const reordered = reorder(current, source.index, destination.index);
+        reorderCards(reordered)
+        return;
+      }
+
+      const currentCard = current![source.index]
+      const newListId =  Number(destinationDroppableId!)
+      const cardUpdatePayload: CardRequestUpdatePayload = {
+        id: currentCard.id!,
+        listId: newListId
+      }
+
+      cardService.updateCard(cardUpdatePayload).then(()=>{
+        listCtx.dispatches.removeCard(currentCard.id!,  Number(sourceDroppableId!))
+        currentCard.listId = newListId
+        listCtx.dispatches.setCard(currentCard, destination.index)
+        
+        reorderCards(listCtx.state.lists.find(p=>p.id === newListId)!.cards)
+      })
+    }
+
+     const  reorderCards = async (cards: any) => {
+      cards.forEach((item: any, index:number)=> {
+          const newOrder = index + 1
+
+          if(newOrder !== item.order) {
+             const updateOrderPayload: CardRequestUpdatePayload = {
+              id: item.id,
+              order: newOrder
+            }
+
+            cardService.updateCard(updateOrderPayload).then(()=> {
+              listCtx.dispatches.updateCardOrder(item.id, item.listId, newOrder)
+            })
+          }
+        })
     }
 
     const handleAddBoardMember = () => {
@@ -132,14 +176,13 @@ const Board = () => {
     }
 
     const tagRender = (props: CustomTagProps) => {
-      const { label, value, closable, onClose } = props;
+      const { label, closable, onClose } = props;
       const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
         event.preventDefault();
         event.stopPropagation();
       };
       return (
         <Tag
-          // color={value}
           onMouseDown={onPreventMouseDown}
           closable={closable}
           onClose={onClose}

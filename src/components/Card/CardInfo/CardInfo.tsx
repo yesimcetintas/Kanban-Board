@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
-import { Calendar, CheckSquare, List, MessageCircle, Tag as TagIcon, Trash, Type } from "react-feather";
+import { Calendar, List, Type } from "react-feather";
 import CustomInput from '../../CustomInput'
 import Modal from '../../Modal'
 import { CardInfoProps, checklist, checklistItem, label } from './CardInfo.types'
@@ -37,21 +37,22 @@ const CardInfo: FC<CardInfoProps> = (props) => {
   const [checkListItemTitle, setCheckListItemTitle] = useState<string>()
 
   const { updateCard } = props
-  const dateValue = props.card?.duedate !== null ? moment(props.card?.duedate) : undefined
+  const dateValue = props.card?.duedate !== null && props.card?.duedate !== undefined ? moment(props.card?.duedate) : undefined
   const mounted = useRef(0);
-
+console.log('card values', cardValues)
   useEffect(() => {
     if (hasBeenInit()) {
       updateCard(cardValues);
     } else {
       setHasBeenInit();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardValues]);
 
   useEffect(() => {
     labelService.label().then(({ data }) => {
       const options: ItemProps[] = [];
-      data.map((item: label) =>{
+      data.forEach((item: label) =>{
         options.push({
           label: item.title,
           value: item.id.toString(),
@@ -72,7 +73,7 @@ const CardInfo: FC<CardInfoProps> = (props) => {
   }
 
   const updateTitle = (value: string) => {
-    setCardValues({ ...cardValues || undefined, title: value });
+    setCardValues({ ...cardValues, title: value });
   } 
 
   const updateDescription = (value: string) => {
@@ -163,9 +164,9 @@ const CardInfo: FC<CardInfoProps> = (props) => {
               <p>Title</p>
             </div>
             <CustomInput
-              text={cardValues.title}
+              text={cardValues.title!}
               name="title"
-              value={cardValues.title}
+              value={cardValues.title!}
               placeholder='Enter Card Title'
               displayClass="board-add-card"
               editClass="board-add-card-edit"
@@ -178,12 +179,12 @@ const CardInfo: FC<CardInfoProps> = (props) => {
               <p>Description</p>
               </div>
               <CustomInput
-                text={cardValues.description === null ? "Add a description" : cardValues.description}
+                text={cardValues.description === null || cardValues.description === undefined ? "Add a description" : props.card?.description}
                 name="description"
-                value={cardValues.description}
+                value={cardValues.description!}
                 placeholder='Enter Description Title'
                 displayClass="board-add-card"
-                editClass="board-add-card-edit" 
+                editClass="board-add-card-edit"
                 onSubmit={updateDescription}/>
           </div>
 

@@ -107,7 +107,7 @@ const Card: FC<CardProps> = (props) => {
           {props.card.checklists.length >0 && (
             <p className="card-footer-item">
               <CheckSquare className='card-footer-icon'/>
-              {calculateCheckItems()}
+              { calculateCheckItems() }
             </p>
           )
           }

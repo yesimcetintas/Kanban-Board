@@ -17,6 +17,7 @@ const CustomInput: FC<CustomInputProps> = (props) => {
     e.preventDefault();
     if (inputText && props.onSubmit) {
       props.onSubmit(inputText);
+      setInputText("");
     }
     setIsCustomInput(false);
   };

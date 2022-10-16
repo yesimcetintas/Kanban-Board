@@ -6,7 +6,8 @@ import { AddCardFormValuesProps, AddCardProps } from './AddCard.types';
 const AddCard: FC<AddCardProps> = (props) => {
     const [formValues, setFormValues] = useState<AddCardFormValuesProps>({
         title: '',
-        listId: props.listId
+        listId: props.listId,
+        order: 0
         })
 
     const handleChange: CustomInputProps['onChange'] = (e, v) => {

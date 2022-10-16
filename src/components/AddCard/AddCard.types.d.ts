@@ -6,5 +6,6 @@ export type AddCardProps = {
 export type AddCardFormValuesProps = {
     title: string
     listId: number | undefined
+    order: number
   }
   
