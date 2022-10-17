@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Button } from 'antd';
+import { useState, useEffect } from 'react'
+import { Alert, Button } from 'antd';
 import AddBoard from '../../components/AddBoard'
 import BoardList from '../../components/BoardList';
 import { board } from './Dashboard.types';
@@ -11,24 +11,27 @@ import { useLoginContext } from '../../contexts/LoginContext/LoginContext'
 import "./Dashboard.css"
 
 const Dashboard = () => {
-  const { logout, username } = useLoginContext()
+  const { logout, id } = useLoginContext()
   const [boards, setBoards] = useState<board[]>([]);
-  
+  const [alertVisible, setAlertVisible] = useState(false);
+
   useEffect(() => {
     boardService.list().then(({ data }) => {
       setBoards(data)
     })
   }, [])
 
-  const addBoardHandler : AddBoardProps['addBoard'] = (values) => {
+  const handleAddBoard : AddBoardProps['addBoard'] = (values) => {
     const boardRequest: BoardRequestPayload = {
       title: values
     }
     boardService.createBoard(boardRequest).then(({data})=>{
+        
         const tempBoardsList = [...boards];
         tempBoardsList.push({
           id: data.id,
           title: data.title,
+          ownerId: data.ownerId
         });
         setBoards(tempBoardsList);
        })
@@ -36,6 +39,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     logout()
+    
   }
 
   const handleUpdateTitle = (id: number, title: string) => {
@@ -44,18 +48,25 @@ const Dashboard = () => {
       const updateBoardIndex=tempBoards.findIndex((elm)=>elm.id === id)
       tempBoards[updateBoardIndex].title=title
       setBoards (tempBoards)
-      console.log("board list", boards)
       })
   }
 
-  const handleRemoveBoard = (id: number) => {
-    boardService.removeBoard(id).then(()=>{
-      const tempBoards = [... boards]
-      const newBoardList = tempBoards.filter((elm)=>elm.id !== id)
+  const handleRemoveBoard = (boardId: number) => {
+    const ownerId = boards.find((elm)=>elm.id === boardId)?.ownerId
+    if(ownerId !== Number(id)){
+      setAlertVisible(true)
+      return
+    }
+    boardService.removeBoard(boardId).then(()=>{
+      const tempBoards = [...boards]
+      const newBoardList = tempBoards.filter((elm)=>elm.id !== boardId)
       setBoards(newBoardList)
-      console.log("boardlist", boards)
     })
   }
+
+  const handleAlertClose = () => {
+    setAlertVisible(false);
+  };
 
   return (
     <div className='dashboard'>
@@ -66,6 +77,11 @@ const Dashboard = () => {
       <div>
        
       </div>
+      <div className='alert-message'>
+        {alertVisible ? (
+          <Alert message="Bu board'u silmek için yetkiniz yoktur." type="warning" closable afterClose={handleAlertClose} />
+        ) : null}
+      </div>
       <div className="dashboard-container">
         <div className="dashboard-inner-container">
           <BoardList
@@ -75,10 +91,11 @@ const Dashboard = () => {
           />
          <div style={{ display: 'flex', width: '200px' }}>
             <AddBoard
-              addBoard={addBoardHandler} />
+              addBoard={handleAddBoard} />
           </div>
         </div>
      </div>
+     
     </div>
   )
 }

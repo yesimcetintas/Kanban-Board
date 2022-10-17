@@ -1,3 +1,5 @@
+import { board } from "../../../../pages/Dashboard/Dashboard.types"
+
 export type ListRequestPayload = {
     title:string,
     boardId: number,

@@ -1,7 +1,5 @@
-import React, { FC, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { FC, useState } from 'react'
 import { Link } from 'react-router-dom'
-// import Button from '../Button'
 import { Button } from 'antd';
 import RegisterCard from '../RegisterCard'
 import Checkbox from '../Checkbox'
@@ -29,7 +27,6 @@ const RegisterForm: FC<RegisterFormProps> = (props) => {
     props.onRegister?.(formValues)
   }
 
-  const navigate = useNavigate()
   return (
     <Styled>
       <RegisterCard title="Register">

@@ -60,10 +60,11 @@
 }
 
 .add-board-member{
-  float: right;
+  /* float: right;
   margin-top: -40px;
   margin-right: 40px;
-  cursor: pointer;
+  cursor: pointer; */
+  margin-right: 20px;
 }
 
 .app-title{
@@ -81,4 +82,15 @@
 .add-member-modal-div{
   width: 500px;
   height: auto;
+}
+
+.logout-btn-board{
+  margin-left: auto;
+  margin-right: 20px;
+  margin-top: 5px;
+}
+
+.logout-board-member-div{
+  float: right;
+  margin-top: -50px;
 }

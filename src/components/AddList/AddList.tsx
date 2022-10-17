@@ -1,5 +1,4 @@
-import React, { FC, useState } from 'react'
-import { StyleSheetManager } from 'styled-components';
+import  { FC, useState } from 'react'
 import CustomInput from '../CustomInput'
 import { CustomInputProps } from '../CustomInput/CustomInput.types';
 import { AddListProps } from './AddList.types';

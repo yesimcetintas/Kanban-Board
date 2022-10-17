@@ -8,6 +8,7 @@ export type CustomInputProps = {
     editClass?: string
     displayClass?: string| undefined
     isCustomInput?: boolean | undefined
+    dontCleanTextAfterSubmit?: boolean | undefined
     onSubmit: (e:any) =>void
     onChange?: (e: React.ChangeEvent<HTMLInputElement>, v: string) => void
 }

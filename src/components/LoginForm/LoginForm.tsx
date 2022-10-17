@@ -1,7 +1,5 @@
-import React, { FC, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { FC, useState } from 'react'
 import { Link } from 'react-router-dom'
-// import Button from '../../../../hafta5ders/src/components/Button'
 import RegisterCard from "../RegisterCard"
 import Checkbox from '../Checkbox'
 import Input from '../Input/Input'
@@ -20,8 +18,6 @@ const LoginForm: FC<LoginFormProps> = (props) => {
     const name = e.target.name
     setFormValues((prev) => ({ ...prev, [name]: v }))
   }
-
-  const navigate = useNavigate()
 
   const handleSubmit = () => {
     props.onLogin?.(formValues)

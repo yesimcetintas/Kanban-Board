@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { CheckSquare } from 'react-feather'
 import CustomInput from '../../../CustomInput'
 import { checklistItem } from '../CardInfo.types'
@@ -6,7 +6,6 @@ import ChecklistItem from '../ChecklistItem'
 import { ChecklistProps } from './Checklist.type'
 
 const Checklist: FC<ChecklistProps> = (props) => {
-  console.log("checklist", props.checklist)
   const calculatePercent = () => {
     if (!props.checklist.items.length) return 0;
     const completed = props.checklist.items.filter(
@@ -19,7 +18,7 @@ const Checklist: FC<ChecklistProps> = (props) => {
   return (
     < >
       <div className="cardinfo-box-title">
-        <CheckSquare />
+        <span className='card-info-icon'><CheckSquare /></span>
         <p>{props.checklist.title}</p>
         </div>
         <div className="cardinfo-box-progress-bar">

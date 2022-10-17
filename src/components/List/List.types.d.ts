@@ -2,7 +2,7 @@ import { list } from "../../pages/Board/Board.types"
 import { checklist, label } from "../Card/CardInfo/CardInfo.types"
 
 export type ListProps= {
-    removeList: (number) => void
+    ownerId: number
 }
 
 export type addCardHandlerProps ={

@@ -1,6 +1,6 @@
-import { Button, Input, Form, List, Comment as AntComment, Avatar } from 'antd';
+import { Button, Input, Form, List, Comment as AntComment } from 'antd';
 import moment from 'moment';
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { Trash, User } from 'react-feather';
 import { useListContext } from '../../../../contexts/ListContext/ListContext';
 import { useLoginContext } from '../../../../contexts/LoginContext/LoginContext';
@@ -22,7 +22,7 @@ const Comment: FC<CommentProps> = (props) => {
   }
   
   const tempComments: CommentItem[] = []
-  props.comments.map(item=>{
+  props.comments.forEach(item=>{
     
     const comment: CommentItem = {
       id: item.id,
@@ -43,7 +43,7 @@ const Comment: FC<CommentProps> = (props) => {
     setValue(e.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleCommentSubmit = () => {
     if (!value) return;
 
     const CardCommentRequest: CardCommentRequestPayload = {
@@ -72,7 +72,7 @@ const Comment: FC<CommentProps> = (props) => {
     })
   };
 
-  const handleDelete = (id: number) => {
+  const handleCommentDelete = (id: number) => {
     cardCommentService.deleteComment(id).then(()=>{
       listCtx.dispatches.deleteComment(id, props.cardId, props.listId)
       const newComment = comments.filter(p=>p.id !== id)
@@ -88,7 +88,13 @@ const Comment: FC<CommentProps> = (props) => {
       renderItem={item => (
         <List.Item>
            <AntComment {...item} />
-            { item.author === username ? <div onClick={()=>handleDelete(item.id)}><Trash /></div>: ''}
+            { item.author === username ? 
+              <div 
+                onClick={()=>handleCommentDelete(item.id)} 
+                style={{cursor: "pointer"}}>
+                  <Trash />
+              </div>
+              : ''}
         </List.Item>
       )}
     />
@@ -103,14 +109,11 @@ const Comment: FC<CommentProps> = (props) => {
         avatar={<User />}
         content={
           <>
-          
           <Form.Item>
-            
             <TextArea rows={4} onChange={handleChange} value={value} />
-             
           </Form.Item>
           <Form.Item>
-            <Button htmlType="submit" loading={submitting} onClick={handleSubmit} type="primary">
+            <Button htmlType="submit" loading={submitting} onClick={handleCommentSubmit} type="primary">
               Add Comment
             </Button>
         </Form.Item>

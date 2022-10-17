@@ -1,18 +1,17 @@
 import  { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import AddList from '../../components/AddList'
 import { AddListProps } from '../../components/AddList/AddList.types'
 import { CardRequestUpdatePayload } from '../../services/http/endpoints/card/types'
 import List from '../../components/List'
 import { listService } from '../../services/http/endpoints/list'
 import { ListRequestPayload, updateListRequestPayload } from '../../services/http/endpoints/list/types'
-import "./Board.css"
 import { useListContext } from '../../contexts/ListContext/ListContext'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { boardMember } from './Board.types'
 import { Settings } from 'react-feather'
 import Modal from '../../components/Modal'
-import { Select, Tag } from 'antd'
+import { Button, Select, Tag } from 'antd'
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import { userListService } from '../../services/http/endpoints/userList'
 import { BoardMemberRequestPayload } from '../../services/http/endpoints/boardMember/types'
@@ -20,6 +19,8 @@ import { boardMemberService } from '../../services/http/endpoints/boardMember'
 import { useLoginContext } from '../../contexts/LoginContext/LoginContext'
 import reorder from '../../Helper/Util'
 import { cardService } from '../../services/http/endpoints/card'
+
+import "./Board.css"
 
 const Board = () => {
 
@@ -33,9 +34,13 @@ const Board = () => {
     const loginContext = useLoginContext()
     const [showModal, setShowModal] = useState(false);
     const [options, setOptions] = useState<UserProps[]>()
-    const [boardMembers, setBoardMembers] = useState<boardMember[]>() 
+    const [boardMembers, setBoardMembers] = useState<boardMember[]>()
+
+    const navigate = useNavigate()
     
     let {id} = useParams()
+
+    console.log("listcontex", listCtx.state.lists)
   
     useEffect(() => {
       listService.list(Number(id)).then(({ data }) => {
@@ -66,7 +71,7 @@ const Board = () => {
  // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const addListHandler: AddListProps["addList"] = (values) => {
+    const handleAddList: AddListProps["addList"] = (values) => {
       const maxOrder = listCtx.state.lists.length === 0 ? 0: Math.max.apply(Math, listCtx.state.lists.map(v => v.order));
       const newOrder = maxOrder + 1
       const listRequest: ListRequestPayload = {
@@ -78,13 +83,6 @@ const Board = () => {
         listCtx.dispatches.addList(data)
       })
     }
-
-    const removeListHandler = (id: number ) => {
-
-      listService.removeList(id)
-      listCtx.dispatches.removeList(id)
-    }
-
 
     const onDragEnd = (result: DropResult) => {
       // dropped nowhere
@@ -171,7 +169,7 @@ const Board = () => {
       setShowModal(true)
     } 
 
-    const onClose = () => {
+    const onCloseBoardMembers = () => {
       setShowModal(false)
     }
 
@@ -193,7 +191,7 @@ const Board = () => {
       );
     };
 
-    const handleSelect = (value: string) =>{
+    const handleSelectBoardMember = (value: string) =>{
       const boardMemberRequest: BoardMemberRequestPayload = {
         username: value,
         boardId: Number(id)
@@ -213,12 +211,16 @@ const Board = () => {
 
     }
 
-    const handleDeselect = (value: string) =>{
+    const handleDeselectBoardMember = (value: string) =>{
       const boardMemberId = boardMembers?.find((elm)=>elm.user.username === value)?.id
       boardMemberService.removeBoardMember(boardMemberId!).then(()=>{
         const newBoardMembers = boardMembers?.filter((elm)=>elm.user.username !== value)
         setBoardMembers(newBoardMembers)
       })
+    }
+    const handleLogout = () => {
+      loginContext.logout()
+      navigate("/")
     }
 
   return (
@@ -226,9 +228,12 @@ const Board = () => {
       <div className="app">
         <div className="app-nav">
           <h1 className='app-title'>Kanban Board</h1>
-          <span className='add-board-member' >
-            <Settings onClick={handleAddBoardMember} />
-          </span>
+          <div className='logout-board-member-div'>
+            <span className='add-board-member' >
+              <Settings onClick={handleAddBoardMember} />
+            </span>
+            <Button className='logout-btn-board' onClick={handleLogout}>Logout</Button>
+          </div>
           
         </div>
         <div className="app-boards-container">
@@ -243,8 +248,7 @@ const Board = () => {
             {provided => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 <List
-                removeList={removeListHandler}
-              />
+                  ownerId= {loginContext.id}/>
                 {provided.placeholder}
               </div>
             )}
@@ -252,14 +256,14 @@ const Board = () => {
           </Droppable>
             <div className="app-boards-last">
               <AddList
-                addList={addListHandler}/>
+                addList={handleAddList}/>
             </div>
           </div>
         </div>
 
         {showModal && (
         <Modal 
-          onClose={onClose} 
+          onClose={onCloseBoardMembers} 
           >
           <div className='add-member-modal-div'>
           <Select
@@ -269,8 +273,8 @@ const Board = () => {
             tagRender={tagRender}
             defaultValue={boardMembers?.map(p=>p.user.username)}
             options={options}
-            onSelect={handleSelect}
-            onDeselect= {handleDeselect}
+            onSelect={handleSelectBoardMember}
+            onDeselect= {handleDeselectBoardMember}
           />
           </div>
 

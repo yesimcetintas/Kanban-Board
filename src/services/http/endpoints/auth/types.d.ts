@@ -12,6 +12,7 @@ export type RegisterRequestPayload = {
 export type RegisterResponseType = {
     data : {
         username : string,
-        token: string
+        token: string,
+        id: number
     }
 }

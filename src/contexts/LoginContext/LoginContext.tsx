@@ -11,6 +11,7 @@ import {
   
   const initialState: StateType = {
     isLoggedIn: Boolean(localStorage.getItem('token')),
+    id: Number(localStorage.getItem("id" || "")),
     token: localStorage.getItem('token') || '',
     username: localStorage.getItem('username') || '',
   }
@@ -51,19 +52,22 @@ import {
       // ) 
     }, [state.token])
   
-    const login = (token: string, username: string) => {
+    const login = (token: string, username: string, id: number) => {
       setState({
         username,
+        id,
         token,
         isLoggedIn: true,
       })
     
       localStorage.setItem('token', token)
       localStorage.setItem('username', username)
+      localStorage.setItem('id', id.toString())
     }
     const logout = () => {
       setState({
         username: '',
+        id: 0,
         token: '',
         isLoggedIn: false,
       })
@@ -88,9 +92,10 @@ import {
     const { state, login, logout } = useContext(LoginContext)
     return {
       username: state.username,
+      id: state.id,
       isLoggedIn: state.isLoggedIn,
       login,
-      logout,
+      logout
     }
   }
   

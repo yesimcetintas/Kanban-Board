@@ -1,10 +1,8 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { Calendar, List, Type } from "react-feather";
 import CustomInput from '../../CustomInput'
 import Modal from '../../Modal'
 import { CardInfoProps, checklist, checklistItem, label } from './CardInfo.types'
-
-import "./CardInfo.css"
 import { DatePicker, DatePickerProps } from 'antd'
 import { card } from '../../List/List.types'
 import moment from 'moment';
@@ -20,6 +18,8 @@ import { CustomInputProps } from '../../CustomInput/CustomInput.types';
 import Checklist from './Checklist';
 import Label from './Label';
 import Comments from "./Comment"
+
+import "./CardInfo.css"
 
 const CardInfo: FC<CardInfoProps> = (props) => {
   const [cardValues, setCardValues] = useState<card>(
@@ -39,7 +39,6 @@ const CardInfo: FC<CardInfoProps> = (props) => {
   const { updateCard } = props
   const dateValue = props.card?.duedate !== null && props.card?.duedate !== undefined ? moment(props.card?.duedate) : undefined
   const mounted = useRef(0);
-console.log('card values', cardValues)
   useEffect(() => {
     if (hasBeenInit()) {
       updateCard(cardValues);
@@ -72,18 +71,18 @@ console.log('card values', cardValues)
     mounted.current += 1;
   }
 
-  const updateTitle = (value: string) => {
+  const handleUpdateTitle = (value: string) => {
     setCardValues({ ...cardValues, title: value });
   } 
 
-  const updateDescription = (value: string) => {
+  const handleUpdateDescription = (value: string) => {
     setCardValues({ ...cardValues, description: value });
   } 
 
   const onChangeDate: DatePickerProps['onChange'] = (dateString) => {
     setCardValues({ ...cardValues, duedate: dateString?.format('YYYY-MM-DD') });
   };
-  const handleSelect = (value: string) => {
+  const handleLabelSelect = (value: string) => {
     const cardLabelRequest: CardLabelRequestPayload = {
       cardId: cardValues.id!,
       labelId: Number(value)
@@ -103,14 +102,14 @@ console.log('card values', cardValues)
     
   };
 
-  const handleDeselect = (value: string) => {
+  const handleLabelDeselect = (value: string) => {
    const cardLabelId = cardValues.labels.find(p=>p.id === Number(value))?.CardLabel.id
     cardLabelService.deleteCardLabel(cardLabelId!).then(()=>{
       listCtx.dispatches.deleteLabel( Number(value), cardValues.id, cardValues.listId)
     })
   };
 
-  const addChecklist = (value: string) => {
+  const handleAddChecklist = (value: string) => {
     const cardChecklistRequest: CardChecklistRequestPayload = {
       cardId: cardValues.id!,
       title: value
@@ -121,7 +120,7 @@ console.log('card values', cardValues)
     })
   }
 
-  const addChecklistItem = (checkListId: number) => {
+  const handleAddChecklistItem = (checkListId: number) => {
     const cardChecklistItemRequest: CardChecklistItemRequestPayload = {
       checklistId: checkListId,
       title: checkListItemTitle!,
@@ -137,7 +136,7 @@ console.log('card values', cardValues)
     setCheckListItemTitle(v)
   }
 
-  const updateTask = (id: number, value: boolean, checklistId: number) => {
+  const handleUpdateTask = (id: number, value: boolean, checklistId: number) => {
     const itemArr = cardValues.checklists.find((elm: checklist)=> elm.id === checklistId);
     
     const itemId= itemArr!.items.find((item: checklistItem) => item.id === id )!.id
@@ -160,37 +159,39 @@ console.log('card values', cardValues)
         <div className='cardinfo'>
           <div className="cardinfo-box">
             <div className="cardinfo-box-title">
-              <Type />
+              <span className='card-info-icon'><Type /></span>
               <p>Title</p>
             </div>
             <CustomInput
               text={cardValues.title!}
               name="title"
+              dontCleanTextAfterSubmit={true}
               value={cardValues.title!}
               placeholder='Enter Card Title'
               displayClass="board-add-card"
               editClass="board-add-card-edit"
-              onSubmit={updateTitle}/>
+              onSubmit={handleUpdateTitle}/>
           </div>
 
           <div className="cardinfo-box">
             <div className="cardinfo-box-title">
-              <List />
+              <span className='card-info-icon'><List /></span>
               <p>Description</p>
               </div>
               <CustomInput
                 text={cardValues.description === null || cardValues.description === undefined ? "Add a description" : props.card?.description}
                 name="description"
+                dontCleanTextAfterSubmit={true}
                 value={cardValues.description!}
                 placeholder='Enter Description Title'
                 displayClass="board-add-card"
                 editClass="board-add-card-edit"
-                onSubmit={updateDescription}/>
+                onSubmit={handleUpdateDescription}/>
           </div>
 
           <div className="cardinfo-box">
             <div className="cardinfo-box-title">
-              <Calendar />
+              <span className="card-info-icon"><Calendar /></span>
               <p>Date</p>
             </div>
               <DatePicker 
@@ -203,8 +204,8 @@ console.log('card values', cardValues)
             <Label
               labels={cardValues.labels}
               options={options}
-              onSelect={handleSelect}
-              onDeselect={handleDeselect}
+              onSelect={handleLabelSelect}
+              onDeselect={handleLabelDeselect}
             />
           </div>
           <div className="cardinfo-box">
@@ -214,11 +215,10 @@ console.log('card values', cardValues)
                   <Checklist
                     key={index}
                     checklist={elm}
-                    updateTask = {updateTask}
+                    updateTask = {handleUpdateTask}
                     value={checkListItemTitle}
                     onChange={handleCheckListItemTitleChange}
-                    onSubmit={() => addChecklistItem(elm.id)}
-                  />
+                    onSubmit={() => handleAddChecklistItem(elm.id)}/>
                 )
               }
             </div>
@@ -228,7 +228,7 @@ console.log('card values', cardValues)
               placeholder='Enter Checklist Title'
               displayClass="board-add-card"
               editClass="board-add-card-edit"
-              onSubmit={addChecklist}/>
+              onSubmit={handleAddChecklist}/>
           </div>
           <Comments
             comments={cardValues.comments}

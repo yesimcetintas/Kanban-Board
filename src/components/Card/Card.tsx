@@ -1,20 +1,20 @@
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import { useListContext } from '../../contexts/ListContext/ListContext';
 import { cardService } from '../../services/http/endpoints/card';
-import { CardRequestUpdatePayload } from '../../services/http/endpoints/card/types';
 import { card } from '../List/List.types';
 import { AlignLeft, CheckSquare, Clock, MoreHorizontal } from "react-feather";
-import "./Card.css"
 import { CardProps } from './Card.types'
 import CardInfo from './CardInfo';
 import { formatDate } from '../../Helper/Util';
 import { Dropdown, Menu, Space } from 'antd';
 
+import "./Card.css"
+
 const Card: FC<CardProps> = (props) => {
   const listCtx = useListContext()
   const [showModal, setShowModal] = useState(false);
 
-  const updateCard= (card:card) => {
+  const handleUpdateCard= (card:card) => {
 
     card.title = card.title ?? undefined
     card.description = card.description ?? undefined
@@ -26,7 +26,7 @@ const Card: FC<CardProps> = (props) => {
     })
   }
 
-  const closeModal = () => {
+  const handleCloseModal = () => {
     setShowModal(false)
   }
 
@@ -50,21 +50,20 @@ const Card: FC<CardProps> = (props) => {
   const calculateCheckItems = () => {
     let totalCheckItemsCount = 0
     let checkedItemsCount = 0
-    props.card.checklists.map(checkList=> {
+    props.card.checklists.forEach(checkList=> {
       totalCheckItemsCount += checkList.items.length
       checkedItemsCount += checkList.items.filter(p=>p.isChecked).length
     })
     return `${checkedItemsCount}/${totalCheckItemsCount}`
   }
 
-
   return (
     <>
     {showModal && (
       <CardInfo
-        onClose={closeModal}
+        onClose={handleCloseModal}
         card={props.card}
-        updateCard={updateCard}
+        updateCard={handleUpdateCard}
       />
     )}
       <div 
@@ -113,8 +112,6 @@ const Card: FC<CardProps> = (props) => {
           }
         </div>
       </div>
-    {/* </div> */}
-
     </>
     
   )

@@ -4,9 +4,6 @@ import type { CustomTagProps } from 'rc-select/lib/BaseSelect';
 import React, { FC } from 'react'
 import { LabelProps } from './Label.type';
 
-
-
-
 const Label: FC<LabelProps> = (props) => {
     const labels = props.labels
 
@@ -14,7 +11,7 @@ const Label: FC<LabelProps> = (props) => {
 
     const tagRender = (props: CustomTagProps) => {
         const { label, value, closable, onClose } = props;
-        const color = labels.find((elm)=>elm.id == Number(value))?.color
+        const color = labels.find((elm)=>elm.id === Number(value))?.color
         const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
           event.preventDefault();
           event.stopPropagation();
@@ -36,7 +33,7 @@ const Label: FC<LabelProps> = (props) => {
   return (
     <div>
         <div className="cardinfo-box-title">
-            <TagIcon/>
+            <span className='card-info-icon'><TagIcon/></span>
             <p>Labels</p>
         </div>
         <div className="cardinfo-box-labels">

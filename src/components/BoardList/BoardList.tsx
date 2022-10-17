@@ -4,15 +4,12 @@ import { Button, Dropdown, Input, Menu, Space } from 'antd';
 import { Clipboard, MoreHorizontal } from 'react-feather'
 import { board } from '../../pages/Dashboard/Dashboard.types';
 import { useNavigate } from 'react-router-dom';
+import Modal from '../Modal';
 
 import "./BoardList.css"
-import { useListContext } from '../../contexts/ListContext/ListContext';
-import Modal from '../Modal';
-import { boardService } from '../../services/http/endpoints/board';
 
 const BoardList: FC<BoardListProps> = (props) => {
 
-  const listCtx = useListContext()
   const [showModal, setShowModal] = useState(false);
   const [titleForm, setTitleForm] = useState({
     id: 0,
@@ -21,11 +18,11 @@ const BoardList: FC<BoardListProps> = (props) => {
 
   const navigate = useNavigate()
 
-  const handleClick = (value: number | undefined) => {
+  const handleNavigateClick = (value: number | undefined) => {
     navigate(`/board/${value}`)
   }
 
-  const removeBoard= (id: number)=>{
+  const handleRemoveBoard= (id: number)=>{
     props.onRemove(id)
   }
 
@@ -47,7 +44,7 @@ const BoardList: FC<BoardListProps> = (props) => {
     setTitleForm((prev) => ({ ...prev, title: value}))
     }
   
-    const handleSubmit = () => {
+    const handleUpdateSubmit = () => {
       props.onRename (titleForm.id, titleForm.title)
       setShowModal(false)
     }
@@ -55,7 +52,7 @@ const BoardList: FC<BoardListProps> = (props) => {
     const handleBoardClick = (e: any, id: number) => {
       const targetId = e.target.id
       if(targetId !== 'renameTitle' && targetId !== 'removeBoard') {
-       handleClick(id)
+        handleNavigateClick(id)
       }
     }
 
@@ -63,7 +60,7 @@ const BoardList: FC<BoardListProps> = (props) => {
     <Menu
       items={[
         {
-          label: <div id="removeBoard" onClick={() => removeBoard(id)}>Remove Board</div>,
+          label: <div id="removeBoard" onClick={() => handleRemoveBoard(id)}>Remove Board</div>,
           key: '0',
         },
         {
@@ -116,11 +113,9 @@ const BoardList: FC<BoardListProps> = (props) => {
               value={titleForm.title}
               className="update-input"
               />
-            <Button type="primary" onClick={handleSubmit} className="update-button">Update</Button>
+            <Button type="primary" onClick={handleUpdateSubmit} className="update-button">Update</Button>
           </div>
-
         </Modal>
-      
       )}
     </div>
   )

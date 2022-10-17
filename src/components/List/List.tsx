@@ -4,15 +4,15 @@ import { list } from "../../pages/Board/Board.types"
 import { MoreHorizontal } from "react-feather"
 import Card from "../Card"
 import AddCard from "../AddCard"
-import "./List.css"
 import { AddCardProps } from "../AddCard/AddCard.types"
 import { cardService } from "../../services/http/endpoints/card"
 import { useListContext } from '../../contexts/ListContext/ListContext'
 import { Draggable, Droppable } from "react-beautiful-dnd"
-import { Button, Dropdown, Input, Menu, Space } from "antd"
+import { Alert, Button, Dropdown, Input, Menu, Space } from "antd"
 import { listService } from "../../services/http/endpoints/list"
 import Modal from "../Modal"
 
+import "./List.css"
 
 const List: FC<ListProps> =(props) => {
   const listCtx = useListContext()
@@ -21,8 +21,9 @@ const List: FC<ListProps> =(props) => {
     id: 0,
     title: ''
   })
+  const [alertVisible, setAlertVisible] = useState(false); 
 
-  const addCardHandler: AddCardProps["addCard"] = (values) => {
+  const handleAddCard: AddCardProps["addCard"] = (values) => {
     const cards = listCtx.state.lists.find(p=>p.id === values.listId)!.cards
 
     const maxOrder = cards?.length === 0 ? 0: 
@@ -35,7 +36,15 @@ const List: FC<ListProps> =(props) => {
     })
   }
 
-  const removeList = (id: number) => {
+  const handleRemoveList = (id: number) => {
+    const ownerId = listCtx.state.lists.find((elm)=>elm.id === id)?.board?.ownerId
+    console.log("ownerID",ownerId)
+    console.log("context", props.ownerId)
+
+    if(ownerId !== props.ownerId){
+      setAlertVisible(true)
+      return
+    }
     listService.removeList(id).then(()=>{
       listCtx.dispatches.removeList(id)
     })
@@ -59,19 +68,24 @@ const List: FC<ListProps> =(props) => {
     setTitleForm((prev) => ({ ...prev, title: value}))
     }
 
-    const handleSubmit = () => {
+    const handleUpdateTitle = () => {
       listService.updateList({title: titleForm.title, listId: titleForm.id }).then(()=>{
         listCtx.dispatches.updateList(titleForm.title, titleForm.id)
         setShowModal(false)
       })
       
     } 
+  
+    const handleClose = () => {
+      setAlertVisible(false);
+    };
+
 
   const menu = (id: number) => (
     <Menu
       items={[
         {
-          label: <div onClick={() => removeList(id)}>Remove List</div>,
+          label: <div onClick={() => handleRemoveList(id)}>Remove List</div>,
           key: '0',
         },
         {
@@ -81,12 +95,17 @@ const List: FC<ListProps> =(props) => {
       ]}
     />
   );
-  // const [showDropdown, setShowDropdown] = useState(false);
   return (
-
+    <>
+    <div className="alert-message-list">
+      {alertVisible ? (
+        <Alert message="Bu listeyi silmek için yetkiniz yoktur." type="warning" closable afterClose={handleClose} />
+      ) : null}
+    </div>
     <div 
       className="list-body"
       >
+
       {
         listCtx.state.lists.sort((a: any, b: any) => a.order - b.order)
         .map((elm:list, index: number)=>
@@ -124,12 +143,10 @@ const List: FC<ListProps> =(props) => {
                     { 
                       elm.cards?.sort((a: any, b: any) => a.order - b.order)
                       .map((item, index)=>
-                      // Draggable
                       <Draggable
                         key={item.id}
                         draggableId={`card-${item.id!}`}
                         index={index}
-                        // shouldRespectForceTouch={false}
                       >
                         {(dragProvided, dragSnapshot) => (
                         <Card
@@ -143,7 +160,7 @@ const List: FC<ListProps> =(props) => {
                     }
                     {dropProvided.placeholder}
                     <AddCard
-                      addCard={addCardHandler} 
+                      addCard={handleAddCard} 
                       listId={elm.id}/>
                   </div>
                 </div>
@@ -168,15 +185,12 @@ const List: FC<ListProps> =(props) => {
               value={titleForm.title}
               className="update-input"
               />
-            <Button type="primary" onClick={handleSubmit} className="update-button">Update</Button>
+            <Button type="primary" onClick={handleUpdateTitle} className="update-button">Update</Button>
           </div>
-
         </Modal>
-      
     )}
-
     </div>
-      
+  </> 
   )
 }
 

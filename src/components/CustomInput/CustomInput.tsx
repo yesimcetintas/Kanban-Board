@@ -17,7 +17,9 @@ const CustomInput: FC<CustomInputProps> = (props) => {
     e.preventDefault();
     if (inputText && props.onSubmit) {
       props.onSubmit(inputText);
-      setInputText("");
+      if(!props.dontCleanTextAfterSubmit) {
+        setInputText("");
+      }
     }
     setIsCustomInput(false);
   };
@@ -53,9 +55,7 @@ const CustomInput: FC<CustomInputProps> = (props) => {
             className={`custom-input-display ${props.displayClass ? props.displayClass : ""}`}
                 onClick={() => setIsCustomInput(true)}>{props.text}</p>
         )
-
         }
-      
     </div>
   )
 }

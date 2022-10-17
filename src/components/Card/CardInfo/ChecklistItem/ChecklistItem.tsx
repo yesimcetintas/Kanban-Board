@@ -1,5 +1,4 @@
-import React, { FC } from 'react'
-import { Trash } from 'react-feather'
+import  { FC } from 'react'
 import { ChecklistItemProps } from './ChecklistItem.type'
 
 const ChecklistItem: FC<ChecklistItemProps> = (props) => {
@@ -13,7 +12,6 @@ const ChecklistItem: FC<ChecklistItemProps> = (props) => {
         }
         />
         <p className={props.item.isChecked ? "completed" : ""}>{props.item.title}</p>
-        <Trash/>
     </div>
   )
 }
