@@ -14,7 +14,6 @@
 - React.js-TypeScript
 - Css
 - React-beautiful-dnd (kullanılan kütüphane)
-- Styled-Components
 
 ## Özellikleri
 - Kayıt olunup, kullanıcı adı ve şifre ile giriş yapılmaktadır.
