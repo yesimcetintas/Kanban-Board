@@ -1,10 +1,8 @@
 import {
-    Children,
   createContext,
   FC,
   PropsWithChildren,
   useContext,
-  useEffect,
   useState,
 } from 'react'
 import  { list } from '../../pages/Board/Board.types'
