@@ -39,8 +39,6 @@ const Board = () => {
     const navigate = useNavigate()
     
     let {id} = useParams()
-
-    console.log("listcontex", listCtx.state.lists)
   
     useEffect(() => {
       listService.list(Number(id)).then(({ data }) => {

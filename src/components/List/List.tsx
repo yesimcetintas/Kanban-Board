@@ -8,7 +8,7 @@ import { AddCardProps } from "../AddCard/AddCard.types"
 import { cardService } from "../../services/http/endpoints/card"
 import { useListContext } from '../../contexts/ListContext/ListContext'
 import { Draggable, Droppable } from "react-beautiful-dnd"
-import { Alert, Button, Dropdown, Input, Menu, Space } from "antd"
+import { Button, Dropdown, Input, Menu, notification, Space } from "antd"
 import { listService } from "../../services/http/endpoints/list"
 import Modal from "../Modal"
 
@@ -21,7 +21,6 @@ const List: FC<ListProps> =(props) => {
     id: 0,
     title: ''
   })
-  const [alertVisible, setAlertVisible] = useState(false); 
 
   const handleAddCard: AddCardProps["addCard"] = (values) => {
     const cards = listCtx.state.lists.find(p=>p.id === values.listId)!.cards
@@ -36,13 +35,19 @@ const List: FC<ListProps> =(props) => {
     })
   }
 
+  type NotificationType = 'success' | 'info' | 'warning' | 'error';
+
+  const openNotificationWithIcon = (type: NotificationType, messageText: string, descriptionText: string) => {
+    notification[type]({
+      message: messageText,
+      description: descriptionText,
+    });
+  };
+
   const handleRemoveList = (id: number) => {
     const ownerId = listCtx.state.lists.find((elm)=>elm.id === id)?.board?.ownerId
-    console.log("ownerID",ownerId)
-    console.log("context", props.ownerId)
-
     if(ownerId !== props.ownerId){
-      setAlertVisible(true)
+      openNotificationWithIcon('warning',"Uyarı", "Bu listeyi silmek için yetkiniz bulunmamaktadır.")
       return
     }
     listService.removeList(id).then(()=>{
@@ -68,18 +73,18 @@ const List: FC<ListProps> =(props) => {
     setTitleForm((prev) => ({ ...prev, title: value}))
     }
 
-    const handleUpdateTitle = () => {
-      listService.updateList({title: titleForm.title, listId: titleForm.id }).then(()=>{
-        listCtx.dispatches.updateList(titleForm.title, titleForm.id)
-        setShowModal(false)
-      })
-      
-    } 
-  
-    const handleClose = () => {
-      setAlertVisible(false);
-    };
-
+  const handleUpdateTitle = () => {
+    const ownerId = listCtx.state.lists.find((elm)=>elm.id === titleForm.id)?.board?.ownerId
+    if(ownerId !== props.ownerId){
+      openNotificationWithIcon('warning',"Uyarı", "Bu listenin adını değiştirmek için yetkiniz bulunmamaktadır.")
+      return
+    }
+    listService.updateList({title: titleForm.title, listId: titleForm.id }).then(()=>{
+      listCtx.dispatches.updateList(titleForm.title, titleForm.id)
+      setShowModal(false)
+    })
+    
+  } 
 
   const menu = (id: number) => (
     <Menu
@@ -96,12 +101,6 @@ const List: FC<ListProps> =(props) => {
     />
   );
   return (
-    <>
-    <div className="alert-message-list">
-      {alertVisible ? (
-        <Alert message="Bu listeyi silmek için yetkiniz yoktur." type="warning" closable afterClose={handleClose} />
-      ) : null}
-    </div>
     <div 
       className="list-body"
       >
@@ -190,7 +189,6 @@ const List: FC<ListProps> =(props) => {
         </Modal>
     )}
     </div>
-  </> 
   )
 }
 

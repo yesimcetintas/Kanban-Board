@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Alert, Button } from 'antd';
+import { Button, notification } from 'antd';
 import AddBoard from '../../components/AddBoard'
 import BoardList from '../../components/BoardList';
 import { board } from './Dashboard.types';
@@ -13,7 +13,6 @@ import "./Dashboard.css"
 const Dashboard = () => {
   const { logout, id } = useLoginContext()
   const [boards, setBoards] = useState<board[]>([]);
-  const [alertVisible, setAlertVisible] = useState(false);
 
   useEffect(() => {
     boardService.list().then(({ data }) => {
@@ -42,19 +41,33 @@ const Dashboard = () => {
     
   }
 
-  const handleUpdateTitle = (id: number, title: string) => {
-      boardService.updateBoard({title: title, boardId: id }).then(()=>{
-      const tempBoards = [...boards]
-      const updateBoardIndex=tempBoards.findIndex((elm)=>elm.id === id)
-      tempBoards[updateBoardIndex].title=title
-      setBoards (tempBoards)
-      })
+  type NotificationType = 'success' | 'info' | 'warning' | 'error';
+
+  const openNotificationWithIcon = (type: NotificationType, messageText: string, descriptionText: string) => {
+    notification[type]({
+      message: messageText,
+      description: descriptionText,
+    });
+  };
+
+  const handleUpdateTitle = (boardId: number, title: string) => {
+    const ownerId = boards.find((elm)=>elm.id === boardId)?.ownerId
+    if(ownerId !== Number(id)){
+      openNotificationWithIcon('warning', "Uyarı", "Bu board'un adını değiştirmek için yetkiniz yoktur.")
+      return
+    }
+    boardService.updateBoard({title: title, boardId: boardId }).then(()=>{
+    const tempBoards = [...boards]
+    const updateBoardIndex=tempBoards.findIndex((elm)=>elm.id === boardId)
+    tempBoards[updateBoardIndex].title=title
+    setBoards (tempBoards)
+    })
   }
 
   const handleRemoveBoard = (boardId: number) => {
     const ownerId = boards.find((elm)=>elm.id === boardId)?.ownerId
     if(ownerId !== Number(id)){
-      setAlertVisible(true)
+      openNotificationWithIcon('warning', "Uyarı", "Bu board'u silmek için yetkiniz yoktur.")
       return
     }
     boardService.removeBoard(boardId).then(()=>{
@@ -64,10 +77,6 @@ const Dashboard = () => {
     })
   }
 
-  const handleAlertClose = () => {
-    setAlertVisible(false);
-  };
-
   return (
     <div className='dashboard'>
       <div className="app-nav-dashboard">
@@ -76,11 +85,6 @@ const Dashboard = () => {
       </div>
       <div>
        
-      </div>
-      <div className='alert-message'>
-        {alertVisible ? (
-          <Alert message="Bu board'u silmek için yetkiniz yoktur." type="warning" closable afterClose={handleAlertClose} />
-        ) : null}
       </div>
       <div className="dashboard-container">
         <div className="dashboard-inner-container">
