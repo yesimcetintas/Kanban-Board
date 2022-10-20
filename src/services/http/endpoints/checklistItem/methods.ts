@@ -6,3 +6,6 @@ export const createCardChecklistItem = (payload: CardChecklistItemRequestPayload
 
 export const updateIsCheckedChecklistItem = (payload: updateIsCheckedChecklistItemRequestPayload) : Promise<updateIsCheckedChecklistItemResponseType> =>
   service.put(`checklist-item/${payload.id}`, payload)
+
+export const deleteCardChecklistItem = (id: number) =>
+service.delete(`checklist-item/${id}`)

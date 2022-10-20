@@ -38,6 +38,7 @@ const Checklist: FC<ChecklistProps> = (props) => {
             key={index}
             item={item}
             updateTask = {props.updateTask}
+            removeTaskItem = {props.removeTaskItem}
             />
         )
         }

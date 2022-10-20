@@ -6,4 +6,5 @@ export type ChecklistProps = {
     value: string | undefined
     onChange: CustomInputProps['onChange']
     onSubmit: (id: number)=> void
+    removeTaskItem : (checklistId: number, id: number) => void
 }

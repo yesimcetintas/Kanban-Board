@@ -212,6 +212,24 @@ export const ListContext = createContext<ContextType>({
         }))
       }
 
+      dispatches.deleteTaskItem = (listId: number, cardId:number, checklistId: number, id: number) => {
+        const listIndex = state.lists.findIndex((item: list) => item.id === listId);
+        if (listIndex < 0) return;
+
+        const tempList = [...state.lists];
+        const cardIndex = tempList[listIndex].cards?.findIndex(c=>c.id === cardId);
+        if(cardIndex! < 0 || cardIndex=== undefined) return;
+
+        const checklistIndex = tempList[listIndex].cards![cardIndex].checklists.findIndex(elm=>elm.id === checklistId)
+        const newItems = tempList[listIndex].cards![cardIndex].checklists[checklistIndex].items.filter(elm=>elm.id !== id)
+        tempList[listIndex].cards![cardIndex].checklists[checklistIndex].items = newItems
+
+        setState((prev) => ({
+          ...prev,
+          lists: tempList,
+        }))
+      }
+
       dispatches.deleteLabel = (labelId: number, cardId: number, listId: number) => {
         const listIndex = state.lists.findIndex((item: list) => item.id === listId);
         if (listIndex < 0) return;

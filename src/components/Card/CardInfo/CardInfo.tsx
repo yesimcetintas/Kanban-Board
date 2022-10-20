@@ -153,6 +153,12 @@ const CardInfo: FC<CardInfoProps> = (props) => {
     
   };
 
+  const handleRemoveTaskItem = (checklistId: number, id: number) => {
+    cardChecklistItemService.deleteCardChecklistItem(id).then(()=> {
+      listCtx.dispatches.deleteTaskItem(cardValues.listId, cardValues.id, checklistId, id)
+    })
+  }
+
   return (
     <div>
       <Modal onClose={props.onClose}>
@@ -216,6 +222,7 @@ const CardInfo: FC<CardInfoProps> = (props) => {
                     key={index}
                     checklist={elm}
                     updateTask = {handleUpdateTask}
+                    removeTaskItem = {handleRemoveTaskItem}
                     value={checkListItemTitle}
                     onChange={handleCheckListItemTitleChange}
                     onSubmit={() => handleAddChecklistItem(elm.id)}/>
