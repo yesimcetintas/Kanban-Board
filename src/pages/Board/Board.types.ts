@@ -8,7 +8,6 @@ export type list = {
     boardId: number | undefined
     cards?: card[]
     order: number
-  
 }
 
 export type boardMember = {

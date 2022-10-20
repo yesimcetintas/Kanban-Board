@@ -78,7 +78,7 @@ const Board = () => {
         order: newOrder
       }
       listService.createList(listRequest).then(({data})=>{
-        listCtx.dispatches.addList(data)
+        listCtx.dispatches.addList(data, loginContext.id)
       })
     }
 

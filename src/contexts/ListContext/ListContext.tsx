@@ -30,8 +30,14 @@ export const ListContext = createContext<ContextType>({
         }))
     }
 
-    dispatches.addList = (list: list) => {
+    dispatches.addList = (list: list, ownerId: number) => {
       list.cards = [];
+      list.board = {
+        id: 0,
+        title: "",
+        ownerId:0
+      }
+      list.board!.ownerId=ownerId
       const tempList = [...state.lists];
      
       tempList.push(list)

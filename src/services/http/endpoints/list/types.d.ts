@@ -12,7 +12,8 @@ export type ListResponseType = {
         id : number,
         title: string,
         boardId: number,
-        order: number
+        order: number,
+        board: board
     }
 }
 
