@@ -53,7 +53,7 @@ const Dashboard = () => {
   const handleUpdateTitle = (boardId: number, title: string) => {
     const ownerId = boards.find((elm)=>elm.id === boardId)?.ownerId
     if(ownerId !== Number(id)){
-      openNotificationWithIcon('warning', "Uyarı", "Bu board'un adını değiştirmek için yetkiniz yoktur.")
+      openNotificationWithIcon('warning', "Warning", "You are not authorized to update title of the board.")
       return
     }
     boardService.updateBoard({title: title, boardId: boardId }).then(()=>{
@@ -67,7 +67,7 @@ const Dashboard = () => {
   const handleRemoveBoard = (boardId: number) => {
     const ownerId = boards.find((elm)=>elm.id === boardId)?.ownerId
     if(ownerId !== Number(id)){
-      openNotificationWithIcon('warning', "Uyarı", "Bu board'u silmek için yetkiniz yoktur.")
+      openNotificationWithIcon('warning', "Warning", "You are not authorized to delete this board.")
       return
     }
     boardService.removeBoard(boardId).then(()=>{

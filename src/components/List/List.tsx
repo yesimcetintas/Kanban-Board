@@ -47,7 +47,7 @@ const List: FC<ListProps> =(props) => {
   const handleRemoveList = (id: number) => {
     const ownerId = listCtx.state.lists.find((elm)=>elm.id === id)?.board?.ownerId
     if(ownerId !== props.ownerId){
-      openNotificationWithIcon('warning',"Uyarı", "Bu listeyi silmek için yetkiniz bulunmamaktadır.")
+      openNotificationWithIcon('warning',"Warning", "You are not authorized to delete this list.")
       return
     }
     listService.removeList(id).then(()=>{
@@ -76,7 +76,7 @@ const List: FC<ListProps> =(props) => {
   const handleUpdateTitle = () => {
     const ownerId = listCtx.state.lists.find((elm)=>elm.id === titleForm.id)?.board?.ownerId
     if(ownerId !== props.ownerId){
-      openNotificationWithIcon('warning',"Uyarı", "Bu listenin adını değiştirmek için yetkiniz bulunmamaktadır.")
+      openNotificationWithIcon('warning',"Warning", "You are not authorized to update title of the list.")
       return
     }
     listService.updateList({title: titleForm.title, listId: titleForm.id }).then(()=>{
