@@ -228,7 +228,7 @@ const Board = () => {
           <h1 className='app-title'>Kanban Board</h1>
           <div className='logout-board-member-div'>
             <span className='add-board-member' >
-              <Settings onClick={handleAddBoardMember} />
+              <Settings className='setting-icon' onClick={handleAddBoardMember} />
             </span>
             <Button className='logout-btn-board' onClick={handleLogout}>Logout</Button>
           </div>

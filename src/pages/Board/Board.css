@@ -94,3 +94,7 @@
   float: right;
   margin-top: -50px;
 }
+
+.setting-icon{
+  cursor: pointer;
+}
